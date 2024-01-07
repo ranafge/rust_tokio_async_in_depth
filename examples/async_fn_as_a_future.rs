@@ -4,7 +4,7 @@ use std::task::{Context, Poll};
 use std::time::{Duration, Instant};
 
 struct Delay {
-    when: Instant
+    when: Instant,
 }
 
 enum MainFuture {
@@ -13,8 +13,7 @@ enum MainFuture {
     // Waiting on Delay i.e the future.await line
     State1(Delay),
     // The future has completed.
-    Terminated
-
+    Terminated,
 }
 
 impl Future for MainFuture {
@@ -29,18 +28,16 @@ impl Future for MainFuture {
                     let future = Delay(when);
                     *self = State1(future);
                 }
-                State1(ref mut my_future) => {
-                    match Pin::new(my_future).poll(cx) {
-                        Poll::Ready(out) => {
-                            assert_eq!(out, "done");
-                            *self = Terminated;
-                            return Poll::Ready(());
-                        }
-                        Poll::Pending => {
-                            return Poll::Pending;
-                        }
+                State1(ref mut my_future) => match Pin::new(my_future).poll(cx) {
+                    Poll::Ready(out) => {
+                        assert_eq!(out, "done");
+                        *self = Terminated;
+                        return Poll::Ready(());
                     }
-                }
+                    Poll::Pending => {
+                        return Poll::Pending;
+                    }
+                },
                 Terminated => {
                     panic!("futer polled after completion")
                 }
@@ -49,8 +46,5 @@ impl Future for MainFuture {
     }
 }
 
-
 #[tokio::main]
-async fn main() {
-
-}
+async fn main() {}
