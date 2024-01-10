@@ -6,25 +6,24 @@ use std::time::{Duration, Instant};
 // A basic implementation of future with stuct
 
 struct Delay {
-    when: Instant
+    when: Instant,
 }
 
 //Future implementation
 impl Future for Delay {
     type Output = &'static str;
-    
+
     /*
         a future must have an `output` type
         what that means is when we resolve (usually await) the future, we need to know what type of future will return
         Kind of like, I'm going to cook, this is the type of food you'll get like indian, thai, chines etc
-    
+
     */
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         if Instant::now() >= self.when {
             println!("Hello world");
             Poll::Ready("done")
-
-        }else {
+        } else {
             // Ignore this line for now
             cx.waker().wake_by_ref();
             Poll::Pending
@@ -32,13 +31,11 @@ impl Future for Delay {
     }
 }
 
-
-
 #[tokio::main]
 async fn main() {
     let when = Instant::now() + Duration::from_millis(10);
-    
-    let future = Delay {when};
+
+    let future = Delay { when };
     let out = future.await;
     /*
      * await, internally, does the following

@@ -3,9 +3,8 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::time::{Duration, Instant};
 struct Delay {
-    when : Instant
+    when: Instant,
 }
-
 
 impl Future for Delay {
     type Output = &'static str;
@@ -14,7 +13,7 @@ impl Future for Delay {
         if Instant::now() >= self.when {
             println!("Hello World!");
             Poll::Ready("done")
-        }else {
+        } else {
             cx.waker().wake_by_ref();
             Poll::Pending
         }
@@ -50,14 +49,14 @@ impl Future for MainFuture {
 
         loop {
             /*
-                So internally, rust does not use a loop, the executor simply shifts its attentions to other  tasks
-                But we simulate that behavior of recchecking if the future is ready with a loop here
-             */
+               So internally, rust does not use a loop, the executor simply shifts its attentions to other  tasks
+               But we simulate that behavior of recchecking if the future is ready with a loop here
+            */
 
             match *self {
                 State0 => {
                     let when = Instant::now() + Duration::from_millis(10);
-                    let future = Delay{when};
+                    let future = Delay { when };
                     *self = State1(future);
                 }
                 State1(ref my_future) => {

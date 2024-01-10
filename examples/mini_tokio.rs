@@ -56,27 +56,27 @@ impl Task {
     }
 
     fn poll(self: Arc<Self>) {
-        // Create a waker from the task instance . this uses the arcwake impl 
+        // Create a waker from the task instance . this uses the arcwake impl
         let waker = task::waker(self.clone());
         let mut cx = Context::from_waker(&waker);
 
         // No other thread ever tires to lock the future
 
-        let mut  future = self.future.try_lock().unwrap();
+        let mut future = self.future.try_lock().unwrap();
         // poll the future
         let _ = future.as_mut().poll(&mut cx);
     }
 
     fn spawn<F>(future: F, sender: &mpsc::Sender<Arc<Task>>)
     where
-        F: Future<Output=()> + Send + 'static ,
-        {
-            let task = Arc::new(Task {
-                future: Mutex::new(Box::pin(future)),
-                executor: sender.clone()
-            });
-            let _ = sender.send(task);
-        }
+        F: Future<Output = ()> + Send + 'static,
+    {
+        let task = Arc::new(Task {
+            future: Mutex::new(Box::pin(future)),
+            executor: sender.clone(),
+        });
+        let _ = sender.send(task);
+    }
 }
 // ArcWake implement Send + Sync marker trait
 impl ArcWake for Task {
@@ -92,7 +92,7 @@ impl MiniTokio {
     }
 
     fn run(&self) {
-        while let Ok(task) = self.scheduled.recv()  {
+        while let Ok(task) = self.scheduled.recv() {
             task.poll();
         }
     }
@@ -103,7 +103,7 @@ impl MiniTokio {
     where
         F: Future<Output = ()> + Send + 'static,
     {
-        Task::spawn(future, &self.sender) ;
+        Task::spawn(future, &self.sender);
     }
     // fn run(&mut self) {
     //     let waker = task::noop_waker();
