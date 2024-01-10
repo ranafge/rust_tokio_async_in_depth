@@ -45,7 +45,7 @@ async fn main() {
      * It continuously calls the poll() function inside of the "future" variable
      * It does not exactly do this using a loop
      * Instead, it calls poll once, and if it gets a Poll::Pending back, it yields controll of the executor
-     * The executor then russ other things, and comes back and checks on (calls) the poll function again later
+     * The executor then run other things, and comes back and checks on (calls) the poll function again later
      * Thus we achieve concurrency
      */
     assert_eq!(out, "done");
