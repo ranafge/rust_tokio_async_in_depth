@@ -1,0 +1,12 @@
+So what exactly is a rust executor?
+How does this thing work exactly?
+
+Recall that running async functions requires either calling them inside a tokio::spwan OR inside an async main function.
+This passes the function on to the executor, which then decides when to execute the function.
+How does it determine when someting asynchronous should be run? Simple : it call poll() function on the future
+(which as we know is present in all futures as part of their definition)
+    * It is the executor that analyzes the varient of the Poll enum that is returned *
+    * A Poll::Ready signals the executor to immediately execute the async function, which is now ready (food is done, time to serve it!)*
+    * A Poll::Pending signals the executor to try and execute something else, because the current async function is not yet ready *
+        ** Thus, concurrency is acheieved **
+        Like checking on if one oven is done cooking; if it is not, leave if for now and check another oven
