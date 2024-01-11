@@ -1,0 +1,20 @@
+A waker is a system in which a future lets the executor know that it is ready to be run
+The basic flow appears to work like this:
+    Executor checks the future, causing it to start executing
+    Future (Poll() function) returns Poll::Pending, meaning it is not done yet
+    waker function is invoked (which is a part of the future's definition, see the future definition and below)
+    Future completes and invokes waker
+    this notifies the executor that future is ready. It is executed again
+    this time, Future (Poll() function) returns Poll::Ready, and is marked in "Terminated" state by the executor
+
+As mentioned above, the Waker portions of the future are baked right into the future definition itself:
+    Poll() function signature: fn poll(self: Pin<&mut self>, cx: &mut Context)
+    else {
+        cx: waker().wake_by_ref();
+        Poll::Pending
+    }
+what does this mean?
+
+cx - context type has a method call "waker()" which returns a "Waker" instance that is bound to the current task (bound or linked to this future s future, in the same way a build in timer/alarm is bound to an oven in);
+This "Waker" instance has a "wake()" method, which, when called, signal to the executor that the task is ready to be run again;
+signal the baker that food is cooked and should be served
