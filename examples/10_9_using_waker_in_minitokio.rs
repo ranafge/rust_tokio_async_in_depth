@@ -156,7 +156,7 @@ impl ArcWake for Task {
 
 /*
     This is an implementation of the ArcWake trait for Task.
-    ArcWake is a trait provided by the futures crate that defines a mehod fo rwaking up a task.
+    ArcWake is a trait provided by the futures crate that defines a mehod for waking up a task.
     Here, wake_by_ref is implemented to call the schedule mehtod on Task
 
     This is waht allows a task to schedule itself once it is ready to proceed
