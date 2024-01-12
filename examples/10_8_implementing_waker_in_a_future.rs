@@ -6,11 +6,11 @@
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-use std::time::{Duration, Instant};
 use std::thread;
+use std::time::{Duration, Instant};
 
 struct Delay {
-    when : Instant
+    when: Instant,
 }
 
 impl Future for Delay {
@@ -20,7 +20,7 @@ impl Future for Delay {
         if Instant::now() >= self.when {
             println!("Hello world");
             Poll::Ready("done")
-        }else {
+        } else {
             // Get a handle to the waker for the current task
             let waker = cx.waker().clone();
             let when = self.when;
@@ -29,8 +29,8 @@ impl Future for Delay {
                 // note that this is not a tokio green thread; we are not using tokio in these few turorials, we are making our own tokio
                 // thread::spawn has the same effect, though it is a lot more memory intensive that using tokio hteads
                 let now = Instant::now();
-                if now  < when {
-                    thread::sleep(when-now);
+                if now < when {
+                    thread::sleep(when - now);
                 }
                 // this checks to see if the time has elapsed
                 // if it has not, wait that time with thread::sleep
@@ -48,17 +48,15 @@ impl Future for Delay {
     }
 }
 
-fn main() {
-    
-}
+fn main() {}
 /*
     Note that in our previous implementaton of Future on Delay, we did this:
         else {
             cx.waker().wake_by_ref();
             Poll::Pending
-        } 
+        }
     cx.waker().wake_by_ref(); essentially calls the walker every time the poll() is about to return pending
-    This worked for us then (because we did not know waht it was) but it is not good practice 
+    This worked for us then (because we did not know waht it was) but it is not good practice
     essentially it keeps pining the executor ot check on this future whenever it returns peinding
     while the code will still work, it wasted CPU resources
 */
