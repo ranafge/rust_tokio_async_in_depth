@@ -59,7 +59,7 @@ async fn main() {
 /*
     Future Migration: In rust, a signal future can move accross different tasks while it's execuing.
     This means that the Future can start executing in one task and then continueing in another task.
-    This is what's happening in the provided code: The Delay future is first polled in the main task, and then it's moved to a new task 
+    This is what's happening in the provided code: The Delay future is first polled in the main task, and then it's moved to a new task
     Whee it's awaited.
 
     poll_fn funciton: poll_fn function is a helper functin from the future crate that creates a Future from a clouser.
@@ -84,14 +84,14 @@ async fn main() {
         Food (future) in the first oven(main thread), cooks a bit( executes via .await) has one waker ( a time that goes ding)
         Foo (future) is moved to a different oven (spawned task), cooks the rest of the way (.await) has another waker (another timer that goes dong);
         Calling the waker() method will only cause the thread that wake is attached to to be activated(know via context);
-        If the future has been moved from there, it will not be executed 
+        If the future has been moved from there, it will not be executed
 
         ** updating the waker : when implementing a Future, you must make sure to update any previously recored Warker with
-        the new one passed to the most recent call to poll. This is because the Future could have moved to a new task and you need to make sure to wake up the 
+        the new one passed to the most recent call to poll. This is because the Future could have moved to a new task and you need to make sure to wake up the
         currect task.
         when the Future is ready to make progress. if you don't this , you could end up waking up a task that no longer has the Future,
         which would be a wasted of resources.
-        
+
 
 
 */

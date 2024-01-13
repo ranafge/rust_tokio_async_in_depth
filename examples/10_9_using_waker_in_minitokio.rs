@@ -256,7 +256,7 @@ fn main() {
         */
         let out = future.await;
         // .await calls the poll() funciton on Delay, which triggers all of our logic above
-        
+
         println!("Output: {}", out);
         assert_eq!(out, "done");
     });
@@ -266,13 +266,13 @@ fn main() {
 /*
     Full explanation of the above
     Delay Struct and future implementaion: The Delay struct represents a future that completes after a certain time.
-    The poll method checks if the current time is past the when time. If it is, it prints "Hello world", and return Poll:Ready("done"). It it's 
+    The poll method checks if the current time is past the when time. If it is, it prints "Hello world", and return Poll:Ready("done"). It it's
     not, it spawns a new thread that sleepps until when time, then calls waker.waker(). This will cause the executor to poll the future again.
     MiniTokio struct and implementaion: Minitokio is a simple executor. It has a channel for sending and receving tasks. The spawn mehtod wraps a future in a task and sends it to the channel. The run mehtod continuously receives tasks from the channel and polls them.
     Task struct and Implementation: Task is a wrapper for a future. It contains the future and sender for the executor's channel. The poll mehtod creates a Waker from the Task, wraps it in a Context and polls the future with it. If the future returns Poll::Pending the waker is used to wake up the task, causing it to be polled again.
     ArcWake implementation for Task: This allows a task to be woken up. The wake_by_ref method calls the schedule mehtod on Task, which  sends a clone of the task back to the executor's channel.
     Main function: The main function creates a new MiniTokio executor, spwans a Delay future onto it, and runs the executor, The Delay future will complete after 10 miniseconds, print "Hello world" and return "done".
-    In summary, this code demonstrates a simple executor that can run on futures. The executor polls futures untill they'are ready. 
+    In summary, this code demonstrates a simple executor that can run on futures. The executor polls futures untill they'are ready.
     If a future is not ready, it can be waken up to be polled again, This is done using the Waker and Context types from the std::task module and the ArcWake trait from the future crate.
 
 */
